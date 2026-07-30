@@ -11,10 +11,10 @@ jobs:
 
     steps:
       - name: 检出代码
-        uses: actions/checkout@v4  # 保持 v4 或更新到 v4 的最新版，这个警告不影响功能
+        uses: actions/checkout@v5  # 保持 v4 或更新到 v4 的最新版，这个警告不影响功能
 
       - name: 设置 Python 环境
-        uses: actions/setup-python@v5  # 保持 v5 或更新到 v5 的最新版，这个警告不影响功能
+        uses: actions/setup-python@v6  # 保持 v5 或更新到 v5 的最新版，这个警告不影响功能
         with:
           python-version: '3.x'
 
@@ -26,7 +26,7 @@ jobs:
         run: python merge_sub.py
 
       - name: 上传 PS.txt 作为工作产物
-        uses: actions/upload-artifact@v4  # 保持 v4 或更新到 v4 的最新版
+        uses: actions/upload-artifact@v5  # 保持 v4 或更新到 v4 的最新版
         with:
           name: merged-subscription
           path: PS.txt
