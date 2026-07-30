@@ -1,32 +1,31 @@
-name: 合并订阅链接
+name: Auto Merge Subscriptions
 
 on:
-  push:
-    branches: [ main ]
-  workflow_dispatch:
+  workflow_dispatch: # 支持在 GitHub 网页端手动一键触发
+  schedule:
+    - cron: '0 */6 * * *' # 默认每 6 小时自动运行一次，可根据需要自行调整
 
 jobs:
-  merge-subscriptions:
+  run-merge:
     runs-on: ubuntu-latest
-
+    permissions:
+      contents: write # 赋予写权限，以便自动提交生成的 PS.txt 到仓库
     steps:
-      - name: 检出代码
-        uses: actions/checkout@v5  # 保持 v4 或更新到 v4 的最新版，这个警告不影响功能
+      - name: 检出仓库代码
+        uses: actions/checkout@v4
 
       - name: 设置 Python 环境
-        uses: actions/setup-python@v6  # 保持 v5 或更新到 v5 的最新版，这个警告不影响功能
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.x'
-
-      - name: 安装依赖（本脚本无需额外依赖）
-        run: |
-          python -m pip install --upgrade pip
+          python-version: '3.10'
 
       - name: 运行合并脚本
         run: python merge_sub.py
 
-      - name: 上传 PS.txt 作为工作产物
-        uses: actions/upload-artifact@v5  # 保持 v4 或更新到 v4 的最新版
-        with:
-          name: merged-subscription
-          path: PS.txt
+      - name: 提交并推送 PS.txt
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add PS.txt
+          git commit -m "Auto update PS.txt [skip ci]" || exit 0
+          git push
